@@ -74,20 +74,20 @@ class Predictor:
     """A Predictor class for the Whisper model"""
 
     def __init__(self):
-        self.model_id = "large-v3-turbo"
+        self.model_id = "large-v2"
         self.pipe = None
 
     def setup(self):
         """Load the model into memory to make running multiple predictions efficient"""
 
         self.pipe = whisper_s2t.load_model(
-            model_identifier="large-v3-turbo", backend="TensorRT-LLM"
+            model_identifier="large-v2", backend="TensorRT-LLM"
         )
 
     def predict(
         self,
         audio,
-        model_name="large-v3-turbo",
+        model_name="large-v2",
         transcription="verbose_json",
         translate=False,
         translation="plain_text",
@@ -127,8 +127,8 @@ class Predictor:
             [audio],
             lang_codes=[language],
             tasks=["transcribe"],
-            initial_prompts=[None],
-            batch_size=96,
+            initial_prompts=[initial_prompt],
+            batch_size=12,
         )
 
         return generate_verbose_json(
