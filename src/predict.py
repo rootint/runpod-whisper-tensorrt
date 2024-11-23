@@ -74,20 +74,42 @@ class Predictor:
     """A Predictor class for the Whisper model"""
 
     def __init__(self):
-        self.model_id = "large-v2"
+        self.model_id = "large-v3-turbo"
         self.pipe = None
 
     def setup(self):
         """Load the model into memory to make running multiple predictions efficient"""
 
         self.pipe = whisper_s2t.load_model(
-            model_identifier="large-v2", backend="TensorRT-LLM"
+            model_identifier="large-v3-turbo",
+            backend="TensorRT-LLM",
+            asr_options={
+                "beam_size": 5,
+                "best_of": 2,  # Placeholder
+                "patience": 1,
+                "length_penalty": 1,
+                "repetition_penalty": 1.01,
+                "no_repeat_ngram_size": 0,
+                "compression_ratio_threshold": 2.4,  # Placeholder
+                "log_prob_threshold": -1.0,  # Placeholder
+                "no_speech_threshold": 0.5,  # Placeholder
+                "prefix": None,  # Placeholder
+                "suppress_blank": True,
+                "suppress_tokens": [-1],
+                "without_timestamps": True,
+                "max_initial_timestamp": 1.0,
+                "word_timestamps": False,  # Placeholder
+                "sampling_temperature": 1,
+                "return_scores": False,
+                "return_no_speech_prob": False,
+                "word_aligner_model": "tiny",
+            },
         )
 
     def predict(
         self,
         audio,
-        model_name="large-v2",
+        model_name="large-v3-turbo",
         transcription="verbose_json",
         translate=False,
         translation="plain_text",
