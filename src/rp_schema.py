@@ -1,6 +1,7 @@
 INPUT_VALIDATIONS = {
     "audio": {"type": str, "required": False, "default": None},
     "audio_base64": {"type": str, "required": False, "default": None},
+    "file_type": {"type": str, "required": False, "default": None},
     "model": {"type": str, "required": False, "default": "base"},
     "transcription": {"type": str, "required": False, "default": "plain_text"},
     "translate": {"type": bool, "required": False, "default": False},

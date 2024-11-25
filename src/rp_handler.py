@@ -20,19 +20,11 @@ MODEL = predict.Predictor()
 MODEL.setup()
 
 
-def base64_to_tempfile(base64_file: str) -> str:
-    """
-    Convert base64 file to tempfile.
-
-    Parameters:
-    base64_file (str): Base64 file
-
-    Returns:
-    str: Path to tempfile
-    """
-    with tempfile.NamedTemporaryFile(suffix=".m4a", delete=False) as temp_file:
+def base64_to_tempfile(base64_file: str, file_type: str) -> str:
+    """Converts base64 to a temporary file with the specified type."""
+    suffix = "." + file_type.lower() if file_type else ""  # Handle missing file_type
+    with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as temp_file:
         temp_file.write(base64.b64decode(base64_file))
-
     return temp_file.name
 
 
@@ -66,8 +58,10 @@ def run_whisper_job(job):
         with rp_debugger.LineTimer("download_step"):
             audio_input = download_files_from_urls(job["id"], [job_input["audio"]])[0]
 
-    if job_input.get("audio_base64", False):
-        audio_input = base64_to_tempfile(job_input["audio_base64"])
+    if job_input.get("audio_base64", False) and job_input.get("file_type"):
+        audio_input = base64_to_tempfile(
+            job_input["audio_base64"], job_input["file_type"]
+        )
 
     with rp_debugger.LineTimer("prediction_step"):
         whisper_results = MODEL.predict(
