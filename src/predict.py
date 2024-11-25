@@ -85,7 +85,7 @@ class Predictor:
             backend="TensorRT-LLM",
             asr_options={
                 "beam_size": 5,
-                "best_of": 2,  # Placeholder
+                "best_of": 5,  # Placeholder
                 "patience": 1,
                 "length_penalty": 1,
                 "repetition_penalty": 1.01,
