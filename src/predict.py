@@ -4,6 +4,8 @@ from runpod.serverless.utils import rp_cuda
 from pydantic import BaseModel
 from typing import List
 from mutagen.mp4 import MP4
+from mutagen.mp3 import MP3
+from mutagen.wave import WAVE
 import whisper_s2t
 import numpy as np
 
@@ -29,8 +31,14 @@ class WhisperVerbose(BaseModel):
     segments: List[Segment]
 
 
-def get_m4a_duration(file_path: str) -> float:
-    audio = MP4(file_path)
+def get_file_duration(file_path: str) -> float:
+    audio = None
+    if file_path.endswith('m4a'):
+        audio = MP4(file_path)
+    elif file_path.endswith('mp3'):
+        audio = MP3(file_path)
+    elif file_path.endswith('wav'):
+        audio = WAVE(file_path)
     return audio.info.length
 
 
@@ -64,7 +72,7 @@ def generate_verbose_json(result, file_name, lang_codes) -> WhisperVerbose:
             if lang_codes is None
             else lang_codes
         ),
-        duration=get_m4a_duration(file_name),
+        duration=get_file_duration(file_name),
         text=final_text,
         segments=segments,
     ).model_dump()
