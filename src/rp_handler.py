@@ -72,6 +72,7 @@ def run_whisper_job(job):
             translate=job_input["translate"],
             language=job_input["language"],
             temperature=job_input["temperature"],
+            response_format=job_input["response_format"],
             best_of=job_input["best_of"],
             beam_size=job_input["beam_size"],
             patience=job_input["patience"],

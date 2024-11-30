@@ -93,6 +93,14 @@ def generate_verbose_json(result, file_name, lang_codes) -> WhisperVerbose:
     ).model_dump()
 
 
+def generate_json(result):
+    text = ""
+    for i in result[0]:
+        text += i["text"] + " "
+
+    return {"text": text}
+
+
 class Predictor:
     """A Predictor class for the Whisper model"""
 
@@ -134,6 +142,7 @@ class Predictor:
         audio,
         model_name="large-v3-turbo",
         transcription="verbose_json",
+        response_format="json",
         translate=False,
         translation="plain_text",
         language=None,
@@ -175,10 +184,16 @@ class Predictor:
             initial_prompts=[initial_prompt],
             batch_size=12,
         )
-
-        return generate_verbose_json(
-            result=result, file_name=audio, lang_codes=language
-        )
+        if response_format == "verbose_json":
+            return generate_verbose_json(
+                result=result, file_name=audio, lang_codes=language
+            )
+        elif response_format == "json":
+            return generate_json(result=result)
+        else:
+            return generate_verbose_json(
+                result=result, file_name=audio, lang_codes=language
+            )
 
         # if transcription == "json":
         #     return result

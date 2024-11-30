@@ -4,6 +4,7 @@ INPUT_VALIDATIONS = {
     "file_type": {"type": str, "required": False, "default": None},
     "model": {"type": str, "required": False, "default": "base"},
     "transcription": {"type": str, "required": False, "default": "plain_text"},
+    "response_format": {"type": str, "required": False, "default": "json"},
     "translate": {"type": bool, "required": False, "default": False},
     "translation": {"type": str, "required": False, "default": "plain_text"},
     "language": {"type": str, "required": False, "default": None},
