@@ -3,9 +3,12 @@ from concurrent.futures import ThreadPoolExecutor
 from runpod.serverless.utils import rp_cuda
 from pydantic import BaseModel
 from typing import List
-from mutagen.mp4 import MP4
-from mutagen.mp3 import MP3
 from mutagen.wave import WAVE
+from mutagen.mp3 import MP3
+from mutagen.mp4 import MP4
+from mutagen.flac import FLAC
+from mutagen.oggvorbis import OggVorbis
+from mutagen.oggopus import OggOpus
 import whisper_s2t
 import numpy as np
 
@@ -32,14 +35,26 @@ class WhisperVerbose(BaseModel):
 
 
 def get_file_duration(file_path: str) -> float:
-    audio = None
-    if file_path.endswith('m4a'):
-        audio = MP4(file_path)
-    elif file_path.endswith('mp3'):
-        audio = MP3(file_path)
-    elif file_path.endswith('wav'):
-        audio = WAVE(file_path)
-    return audio.info.length
+    maudio = None
+    if file_path.endswith("wav"):
+        maudio = WAVE(file_path)
+    elif file_path.endswith("mp3"):
+        maudio = MP3(file_path)
+    elif file_path.endswith("m4a"):
+        maudio = MP4(file_path)
+    elif file_path.endswith("flac"):
+        maudio = FLAC(file_path)
+    elif file_path.endswith("ogg") or file_path.endswith(
+        "opus"
+    ):  # Check for Ogg Vorbis/Opus or just Opus
+        try:
+            maudio = OggOpus(file_path)  # Try Opus first
+        except Exception as e:  # If it's not Opus, try Vorbis
+            maudio = OggVorbis(file_path)
+    else:
+        raise ValueError(f"Unsupported audio type: {file_path}")
+
+    return maudio.info.length
 
 
 def generate_verbose_json(result, file_name, lang_codes) -> WhisperVerbose:
